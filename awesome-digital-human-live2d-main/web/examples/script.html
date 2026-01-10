@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI 陪伴 · 数字人</title>
+    <style>
+        :root {
+            --bg: radial-gradient(120% 140% at 15% 20%, #c8e7ff 0%, #f3f7ff 50%, #fefefe 100%);
+            --card: rgba(255, 255, 255, 0.8);
+            --text: #1f2937;
+            --muted: #6b7280;
+            --accent: #5a7bff;
+            --accent-2: #7ed0c6;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: "SF Pro Display", "PingFang SC", "Microsoft YaHei", sans-serif;
+            color: var(--text);
+            background: var(--bg);
+        }
+
+        .wrap {
+            max-width: 1080px;
+            margin: 0 auto;
+            padding: 56px 24px 64px;
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        header {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: rgba(90, 123, 255, 0.12);
+            color: #3b55c8;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: clamp(28px, 5vw, 44px);
+            letter-spacing: 0.2px;
+        }
+
+        .subtitle {
+            margin: 0;
+            color: var(--muted);
+            font-size: 16px;
+            line-height: 1.7;
+            max-width: 720px;
+        }
+
+        .hero {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 16px;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid rgba(90, 123, 255, 0.12);
+            border-radius: 18px;
+            padding: 18px 20px;
+            box-shadow: 0 18px 60px rgba(0, 0, 0, 0.08);
+            backdrop-filter: blur(10px);
+        }
+
+        .card h3 {
+            margin: 0 0 8px;
+            font-size: 18px;
+        }
+
+        .card p {
+            margin: 0;
+            color: var(--muted);
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        .cta {
+            margin-top: 10px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 11px 16px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            color: #fff;
+            font-weight: 600;
+            text-decoration: none;
+            font-size: 14px;
+            box-shadow: 0 12px 32px rgba(90, 123, 255, 0.28);
+        }
+
+        footer {
+            margin-top: 4px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        /* 数字人气泡样式 */
+        #dify-chatbot-bubble-button {
+            background-color: #5a7bff !important;
+        }
+
+        #dify-chatbot-bubble-window {
+            width: 24rem !important;
+            height: 40rem !important;
+            border-radius: 16px !important;
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <div class="pill">AI 陪伴 · 随时在线</div>
+        <header>
+            <h1>科技让陪伴更温柔</h1>
+            <p class="subtitle">
+                右下角打开数字人，轻声问候、日常聊天、情绪陪伴，随时与您分享生活的点滴。
+            </p>
+        </header>
+
+        <div class="hero">
+            <div class="card">
+                <h3>轻声聊天</h3>
+                <p>像好友一样的对话体验，倾听、回应、共鸣，陪你度过每个瞬间。</p>
+                <a class="cta" href="javascript:void(0)">点击右下角唤醒数字人</a>
+            </div>
+            <div class="card">
+                <h3>贴心提醒</h3>
+                <p>每日问候、天气提示、待办提醒，温柔且不打扰。</p>
+            </div>
+            <div class="card">
+                <h3>情绪陪伴</h3>
+                <p>理解你的情绪，给予安慰与鼓励，让数字人成为可信赖的伙伴。</p>
+            </div>
+        </div>
+
+        <footer>如未出现数字人，请检查网络、embed.js 可访问性、appId 是否有效，以及后端服务是否运行。</footer>
+    </div>
+
+    <!-- 数字人嵌入脚本：请按实际部署调整 baseUrl 与 appId -->
+    <script>
+        window.sentioConfig = {
+            baseUrl: 'http://localhost:3000',
+            appId: '2b0c59cd-947a-4f28-a96a-248fc4d64bf1'
+        };
+    </script>
+    <script src="http://localhost:3000/embed.js" id="mThO6rbgY3k5RQ1f" defer></script>
+</body>
+
+</html>
