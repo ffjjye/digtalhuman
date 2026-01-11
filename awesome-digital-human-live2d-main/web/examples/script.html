@@ -25,21 +25,23 @@
             font-family: "SF Pro Display", "PingFang SC", "Microsoft YaHei", sans-serif;
             color: var(--text);
             background: var(--bg);
+            line-height: 1.8;
         }
 
         .wrap {
             max-width: 1080px;
             margin: 0 auto;
-            padding: 56px 24px 64px;
+            padding: 64px 28px 80px;
             display: flex;
             flex-direction: column;
-            gap: 32px;
+            gap: 36px;
         }
 
         header {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 14px;
+            max-width: 780px;
         }
 
         .pill {
@@ -52,35 +54,40 @@
             color: #3b55c8;
             font-size: 13px;
             font-weight: 600;
+            box-shadow: 0 6px 18px rgba(90, 123, 255, 0.18);
         }
 
         h1 {
             margin: 0;
             font-size: clamp(28px, 5vw, 44px);
             letter-spacing: 0.2px;
+            line-height: 1.3;
         }
 
         .subtitle {
             margin: 0;
             color: var(--muted);
             font-size: 16px;
-            line-height: 1.7;
-            max-width: 720px;
+            line-height: 1.75;
+            max-width: 740px;
         }
 
         .hero {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 16px;
+            gap: 18px;
         }
 
         .card {
             background: var(--card);
             border: 1px solid rgba(90, 123, 255, 0.12);
             border-radius: 18px;
-            padding: 18px 20px;
+            padding: 20px 22px;
             box-shadow: 0 18px 60px rgba(0, 0, 0, 0.08);
             backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
 
         .card h3 {
@@ -96,7 +103,7 @@
         }
 
         .cta {
-            margin-top: 10px;
+            margin-top: 4px;
             display: inline-flex;
             align-items: center;
             gap: 8px;
@@ -108,12 +115,16 @@
             text-decoration: none;
             font-size: 14px;
             box-shadow: 0 12px 32px rgba(90, 123, 255, 0.28);
+            align-self: flex-start;
+            transform: translateY(2px);
         }
 
         footer {
-            margin-top: 4px;
+            margin-top: 8px;
             color: var(--muted);
             font-size: 13px;
+            line-height: 1.6;
+            max-width: 760px;
         }
 
         /* 数字人气泡样式 */
@@ -132,31 +143,29 @@
 
 <body>
     <div class="wrap">
-        <div class="pill">AI 陪伴 · 随时在线</div>
+        <div class="pill">多风格 · 陪伴与助理</div>
         <header>
             <h1>科技让陪伴更温柔</h1>
-            <p class="subtitle">
-                右下角打开数字人，轻声问候、日常聊天、情绪陪伴，随时与您分享生活的点滴。
-            </p>
+            <p class="subtitle">要和小木聊天时，请说“小木小木”；想和不同风格的小木聊天时，请说“换个风格”。</p>
         </header>
 
         <div class="hero">
             <div class="card">
-                <h3>轻声聊天</h3>
-                <p>像好友一样的对话体验，倾听、回应、共鸣，陪你度过每个瞬间。</p>
+                <h3>多风格陪伴</h3>
+                <p>像好友一样聊天、倾听、共鸣，多种风格的小木会陪你说下去。</p>
                 <a class="cta" href="javascript:void(0)">点击右下角唤醒数字人</a>
             </div>
             <div class="card">
-                <h3>贴心提醒</h3>
-                <p>每日问候、天气提示、待办提醒，温柔且不打扰。</p>
+                <h3>思路助理</h3>
+                <p>想把事情捋清楚时，小木会帮你梳理想法、给出更稳妥的方向。</p>
             </div>
             <div class="card">
-                <h3>情绪陪伴</h3>
-                <p>理解你的情绪，给予安慰与鼓励，让数字人成为可信赖的伙伴。</p>
+                <h3>轻松陪聊</h3>
+                <p>想随口聊聊或吐槽，小木都能自然接话，聊得更轻松。</p>
             </div>
         </div>
 
-        <footer>如未出现数字人，请检查网络、embed.js 可访问性、appId 是否有效，以及后端服务是否运行。</footer>
+        <footer>如未出现数字人，请检查网络、embed.js 可访问性，以及后端服务是否运行。</footer>
     </div>
 
     <!-- 数字人嵌入脚本：请按实际部署调整 baseUrl 与 appId -->
