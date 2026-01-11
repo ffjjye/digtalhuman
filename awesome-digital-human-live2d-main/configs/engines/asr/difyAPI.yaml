@@ -32,5 +32,29 @@ PARAMETERS: [
     required: false,
     choices: [],
     default: "jueye"
+  },
+  {
+    name: "wake_words",
+    description: "唤醒词（逗号分隔可填多个），留空关闭唤醒门控。",
+    type: "string",
+    required: false,
+    choices: [],
+    default: "小木小木"
+  },
+  {
+    name: "auto_sleep",
+    description: "是否在每条识别完成后立刻休眠（需再次唤醒）。",
+    type: "bool",
+    required: false,
+    choices: [],
+    default: false
+  },
+  {
+    name: "auto_sleep_seconds",
+    description: "唤醒后若超过此秒数无输出则自动休眠；0 表示不因超时休眠。",
+    type: "int",
+    required: false,
+    choices: [],
+    default: 60
   }
 ]
