@@ -19,7 +19,7 @@ export const JOIN_US_URL = "https://light4ai.feishu.cn/share/base/form/shrcn5zSQ
 export const FEEDBACK_URL = "https://light4ai.feishu.cn/share/base/form/shrcnL4pzrdKlED6oB94nT9Yiyg"
 // sentio
 export const SENTIO_GUIDE_URL = "https://light4ai.feishu.cn/docx/XmGFd5QJwoBdDox8M7zcAcRJnje"
-export const SENTIO_GITHUB_URL = "https://github.com/wan-h/awesome-digital-human-live2d"
+export const SENTIO_GITHUB_URL = "https://github.com/ffjjye/digtalhuman"
 export const SENTIO_BACKGROUND_PATH = "sentio/backgrounds/"
 export const SENTIO_BACKGROUND_STATIC_PATH = "sentio/backgrounds/static"
 export const SENTIO_BACKGROUND_DYNAMIC_PATH = "sentio/backgrounds/dynamic"
