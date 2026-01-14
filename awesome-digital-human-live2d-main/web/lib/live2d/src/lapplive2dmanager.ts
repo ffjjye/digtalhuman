@@ -54,24 +54,24 @@ export class LAppLive2DManager {
       );
     }
 
-    // const model: LAppModel = this._models.at(0);
-    // if (!model) return;
-    // if (model.hitTest(LAppDefine.HitAreaNameHead, x, y)) {
-    //   if (LAppDefine.DebugLogEnable) {
-    //     LAppPal.printMessage(`[APP]hit area: [${LAppDefine.HitAreaNameHead}]`);
-    //   }
-    //   model.setRandomExpression();
-    // } else if (model.hitTest(LAppDefine.HitAreaNameBody, x, y)) {
-    //   if (LAppDefine.DebugLogEnable) {
-    //     LAppPal.printMessage(`[APP]hit area: [${LAppDefine.HitAreaNameBody}]`);
-    //   }
-    //   model.startRandomMotion(
-    //     LAppDefine.MotionGroupTapBody,
-    //     LAppDefine.PriorityNormal,
-    //     this.finishedMotion,
-    //     this.beganMotion
-    //   );
-    // }
+    const model: LAppModel = this._models.at(0);
+    if (!model) return;
+    if (model.hitTest(LAppDefine.HitAreaNameHead, x, y)) {
+      if (LAppDefine.DebugLogEnable) {
+        LAppPal.printMessage(`[APP]hit area: [${LAppDefine.HitAreaNameHead}]`);
+      }
+      model.setRandomExpression();
+    } else if (model.hitTest(LAppDefine.HitAreaNameBody, x, y)) {
+      if (LAppDefine.DebugLogEnable) {
+        LAppPal.printMessage(`[APP]hit area: [${LAppDefine.HitAreaNameBody}]`);
+      }
+      model.startRandomMotion(
+        LAppDefine.MotionGroupTapBody,
+        LAppDefine.PriorityNormal,
+        this.finishedMotion,
+        this.beganMotion
+      );
+    }
   }
 
   /**

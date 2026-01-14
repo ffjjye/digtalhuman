@@ -39,7 +39,7 @@ PARAMETERS: [
     type: "string",
     required: false,
     choices: [],
-    default: "小木小木"
+    default: "小木小木,小木"
   },
   {
     name: "auto_sleep",

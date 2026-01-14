@@ -69,7 +69,7 @@ export async function api_asr_infer_file(
     type: string = PROTOCOL.AUDIO_TYPE.MP3 as string,
     sampleRate: Number = 16000,
     sampleWidth: Number = 2
-): Promise<string> {
+): Promise<{data: string, displayText: string}> {
     const path = `${ASR_PATH}/engine/file`;
     const formData = new FormData();
     const mp3File = new File([data], 'file.mp3', { type: 'audio/mp3' })
@@ -80,10 +80,19 @@ export async function api_asr_infer_file(
     formData.append('sampleRate', String(sampleRate));
     formData.append('sampleWidth', String(sampleWidth));
 
-    return filePost(path, formData, null).then((response: PROTOCOL.StringResponse) => {
-        return response.data;
-    }).catch(() => {
-        return "";
+    return filePost(path, formData, null).then((response: any) => {
+        console.log('[API Debug] ASR response:', response);
+        // data: 过滤后的文本(用于 LLM，包含唤醒检查)
+        // displayText: 完整文本(用于前端显示，包含唤醒词)
+        const result = {
+            data: response.data || "",
+            displayText: response.metadata?.full_text || response.data || ""
+        };
+        console.log('[API Debug] Parsed result:', result);
+        return result;
+    }).catch((error) => {
+        console.error('[API Debug] Error:', error);
+        return {data: "", displayText: ""};
     })
 }
 

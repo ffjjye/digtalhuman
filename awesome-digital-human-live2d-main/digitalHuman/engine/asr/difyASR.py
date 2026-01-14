@@ -15,6 +15,12 @@ __all__ = ["DifyApiAsr"]
 
 @ASREngines.register("Dify")
 class DifyApiAsr(BaseASREngine):
+    def setup(self):
+        """从配置文件读取参数默认值并设置到实例属性"""
+        for param in self.parameters():
+            setattr(self, param.name, param.default)
+        logger.info(f"[ASR] DifyApiAsr setup with wake_words={getattr(self, 'wake_words', 'N/A')}")
+
     def _parse_wake_words(self, wake_words_param):
         if isinstance(wake_words_param, str):
             return [w.strip() for w in re.split(r"[，,]", wake_words_param) if w.strip()]
@@ -23,14 +29,13 @@ class DifyApiAsr(BaseASREngine):
         return []
 
     def _init_wake_config(self, **kwargs):
-        if getattr(self, "_wake_inited", False):
-            return
         wake_words = kwargs.get("wake_words") or getattr(self, "wake_words", "小木小木")
         self._wake_words = self._parse_wake_words(wake_words)
         self._auto_sleep = bool(kwargs.get("auto_sleep", getattr(self, "auto_sleep", False)))
         self._auto_sleep_seconds = int(kwargs.get("auto_sleep_seconds", getattr(self, "auto_sleep_seconds", 60)))
-        self._session_state = {}  # {session_id: {"awake": bool, "last_ts": float}}
-        self._wake_inited = True
+        if not hasattr(self, "_session_state"):
+            self._session_state = {}  # {session_id: {"awake": bool, "last_ts": float}}
+        logger.debug(f"[ASR Wake] Initialized with wake_words={wake_words}, parsed={self._wake_words}, auto_sleep={self._auto_sleep}, timeout={self._auto_sleep_seconds}")
 
     def _apply_wake_gate(self, session_id: str, text: str) -> str:
         now = time.time()
@@ -40,21 +45,22 @@ class DifyApiAsr(BaseASREngine):
         if state["awake"] and self._auto_sleep_seconds > 0 and now - state["last_ts"] > self._auto_sleep_seconds:
             state["awake"] = False
 
-        # 检测唤醒词
+        # 检测唤醒词（不从文本中删除）
         matched = False
         for w in self._wake_words:
             if w and w in text:
                 matched = True
-                text = text.replace(w, "").strip()
                 state["awake"] = True
                 break
 
-        # 未唤醒则丢弃
+        logger.debug(f"[ASR Wake] Checking text='{text}', wake_words={self._wake_words}, matched={matched}, state={state}")
+
+        # 未唤醒则返回空字符串（前端用于判断是否调用LLM）
         if not state["awake"] and not matched:
             self._session_state[session_id] = state
-            return ""
+            return ""  # 返回空表示不调用LLM，但完整文本仍会显示在前端
 
-        # 已唤醒，更新时间
+        # 已唤醒，更新时间，返回完整文本
         state["last_ts"] = now
 
         # 每句后立即休眠（可选）
@@ -62,7 +68,7 @@ class DifyApiAsr(BaseASREngine):
             state["awake"] = False
 
         self._session_state[session_id] = state
-        return text
+        return text  # 返回完整文本，不截断唤醒词
 
     async def run(self, input: AudioMessage, **kwargs) -> TextMessage:
         self._init_wake_config(**kwargs)
@@ -147,6 +153,12 @@ class DifyApiAsr(BaseASREngine):
         logger.debug(f"[ASR] Engine response: {result}")
 
         session_id = kwargs.get("session_id") or kwargs.get("stream_id") or kwargs.get("uuid") or "default"
-        gated = self._apply_wake_gate(session_id, result)
+        full_text = result  # 保存完整文本用于前端显示
+        gated = self._apply_wake_gate(session_id, result)  # 过滤后的文本供 LLM 使用
 
-        return TextMessage(data=gated)
+        logger.info(f"[ASR Debug] session_id={session_id}, full_text='{full_text}', gated='{gated}'")
+        
+        return TextMessage(
+            data=gated,
+            metadata={"full_text": full_text} if full_text != gated else None
+        )

@@ -83,10 +83,14 @@ export function useChatWithAgent() {
     }
 
     const chatWithAgent = (
-        message: string, 
+        message: string,
+        displayMessage?: string,
+        skipAddUserMessage?: boolean,
         postProcess?: (conversation_id: string, message_id: string, think: string, content: string) => void
     ) => {
-        addChatRecord({ role: CHAT_ROLE.HUMAN, think: "", content: message });
+        if (!skipAddUserMessage) {
+            addChatRecord({ role: CHAT_ROLE.HUMAN, think: "", content: displayMessage || message });
+        }
         addChatRecord({ role: CHAT_ROLE.AI, think: "", content: "..." });
         controller.current = new AbortController();
         setChatting(true);
@@ -216,11 +220,13 @@ export function useChatWithAgent() {
 
     const chat = (
         message: string,
+        displayMessage?: string,
+        skipAddUserMessage?: boolean,
         postProcess?: (conversation_id: string, message_id: string, think: string, content: string) => void
     ) => {
         // 新对话终止旧对话
         abort();
-        chatWithAgent(message, postProcess);
+        chatWithAgent(message, displayMessage, skipAddUserMessage, postProcess);
     }
 
     useEffect(() => {

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect, memo } from 'react';
+import { useState, useRef, useEffect, memo, useCallback } from 'react';
 import { StopCircleIcon, MicrophoneIcon, PaperAirplaneIcon } from '@heroicons/react/24/solid';
 import { useSentioAsrStore, useChatRecordStore } from '@/lib/store/sentio';
 import { Input, Button, Spinner, addToast, Tooltip } from '@heroui/react';
@@ -64,10 +64,10 @@ export const ChatInput = memo(({
         setStartAsrConvert(true);
         // 获取mp3数据, 转mp3的计算放到web客户端, 后端拿到的是mp3数据
         const mp3Blob = convertToMp3(micRecoder);
-        let asrResult = "";
-        asrResult = await api_asr_infer_file(asrEngine, asrSettings, mp3Blob);
-        if (asrResult.length > 0) {
-            setMessage(asrResult);
+        const asrResult = await api_asr_infer_file(asrEngine, asrSettings, mp3Blob);
+        // 使用 displayText 显示在输入框(包含唤醒词)
+        if (asrResult.displayText.length > 0) {
+            setMessage(asrResult.displayText);
         } else {
             setMessage("");
         }
@@ -79,7 +79,7 @@ export const ChatInput = memo(({
     }
     const onSendClick = () => {
         if (message == "") return;
-        chat(message, postProcess);
+        chat(message, undefined, false, postProcess);
         setMessage("");
     }
     const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -186,20 +186,56 @@ export const ChatVadInput = memo(() => {
     const canvasRef = useRef<HTMLCanvasElement | null>(null)
     const ctxRef = useRef<CanvasRenderingContext2D | null>(null)
     const { engine: asrEngine, settings: asrSettings } = useSentioAsrStore();
+    const { addChatRecord } = useChatRecordStore();
     const { chat, abort } = useChatWithAgent();
     const { startAudioTimer, stopAudioTimer } = useAudioTimer();
     const waveData = useRef<Uint8Array | null>();
     const drawId = useRef<number | null>(null);
+    const isProcessing = useRef<boolean>(false); // 防止重复处理
 
-    const handleSpeechEnd = async (audio: Float32Array) => {
-        // 获取mp3数据, 转mp3的计算放到web客户端, 后端拿到的是mp3数据
-        const mp3Blob = convertFloat32ArrayToMp3(audio);
-        let asrResult = ""
-        asrResult = await api_asr_infer_file(asrEngine, asrSettings, mp3Blob);
-        if (asrResult.length > 0) {
-            chat(asrResult);
+    const handleSpeechEnd = useCallback(async (audio: Float32Array) => {
+        // 防止重复处理
+        if (isProcessing.current) {
+            console.log('[ASR Debug] ⚠️ Already processing, skipping...', new Date().toISOString());
+            return;
         }
-    }
+        
+        console.log('[ASR Debug] 🎤 Speech end detected at', new Date().toISOString());
+        isProcessing.current = true;
+        
+        try {
+            // 获取mp3数据, 转mp3的计算放到web客户端, 后端拿到的是mp3数据
+            const mp3Blob = convertFloat32ArrayToMp3(audio);
+            const asrResult = await api_asr_infer_file(asrEngine, asrSettings, mp3Blob);
+            console.log('[ASR Debug] Result:', asrResult);
+            console.log('[ASR Debug] data type:', typeof asrResult.data, 'value:', asrResult.data);
+            console.log('[ASR Debug] data.length:', asrResult.data?.length);
+            console.log('[ASR Debug] displayText:', asrResult.displayText);
+            
+            // 如果有识别结果，先显示在聊天记录中
+            if (asrResult && asrResult.displayText && asrResult.displayText.trim().length > 0) {
+                // 先添加用户消息（无论是否唤醒都显示）
+                addChatRecord({ role: CHAT_ROLE.HUMAN, think: "", content: asrResult.displayText });
+                
+                // 只有包含唤醒词时（data不为空）才调用 chat 让数字人回复
+                if (asrResult.data && asrResult.data.trim().length > 0) {
+                    console.log('[ASR Debug] ✅ Has wake word - calling chat with:', asrResult.data);
+                    // skipAddUserMessage=true 因为已经在上面添加过用户消息了
+                    chat(asrResult.data, asrResult.displayText, true);
+                } else {
+                    console.log('[ASR Debug] ❌ No wake word - display only, no response');
+                }
+            }
+        } catch (error) {
+            console.error('[ASR Debug] Error:', error);
+        } finally {
+            // 延迟重置，避免太快的重复调用（增加到3秒）
+            setTimeout(() => {
+                console.log('[ASR Debug] 🔓 Reset isProcessing at', new Date().toISOString());
+                isProcessing.current = false;
+            }, 3000);
+        }
+    }, [asrEngine, asrSettings, addChatRecord, chat]);
     const vad = useMicVAD({
         baseAssetPath: getSrcPath("vad/"),
         onnxWASMBasePath: getSrcPath("vad/"),

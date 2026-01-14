@@ -7,7 +7,7 @@
 
 from typing import List, Dict
 from digitalHuman.agent import AgentPool
-from digitalHuman.utils import config
+from digitalHuman.utils import config, logger
 from digitalHuman.protocol import *
 from digitalHuman.server.models import AgentEngineInput
 
@@ -31,5 +31,6 @@ async def create_agent_conversation(name: str, param: Dict) -> str:
 
 def agent_infer_stream(user: UserDesc, items: AgentEngineInput):
     input = TextMessage(data=items.data)
+    logger.info(f"[AGENT Debug] Received message: '{items.data}', conversation_id: {items.conversation_id}")
     streamContent = agentPool.get(items.engine).run(input=input, user=user, streaming=True, conversation_id=items.conversation_id, **items.config)
     return streamContent

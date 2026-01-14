@@ -82,6 +82,7 @@ class AudioMessage(BaseMessage):
 
 class TextMessage(BaseMessage):
     data: Optional[str] = None
+    metadata: Optional[Dict] = None
 
 class RoleMessage(BaseMessage):
     role: ROLE_TYPE

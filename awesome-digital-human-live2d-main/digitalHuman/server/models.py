@@ -31,6 +31,7 @@ class ASREngineInput(EngineInput, AudioMessage):
 
 class ASREngineOutput(BaseResponse):
     data: str
+    metadata: Optional[Dict] = None
 
 class VoiceListResp(BaseResponse):
     data: List[VoiceDesc] = []

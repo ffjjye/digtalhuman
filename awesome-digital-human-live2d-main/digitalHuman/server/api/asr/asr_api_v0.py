@@ -70,6 +70,7 @@ async def api_asr_infer(header: HeaderInfo, items: ASREngineInput):
     try:
         output: TextMessage = await asr_infer(header, items)
         response.data = output.data
+        response.metadata = output.metadata
     except Exception as e:
         response.data = ""
         response.error(str(e))
@@ -102,6 +103,7 @@ async def api_asr_infer_file(
         )
         output: TextMessage = await asr_infer(header, items)
         response.data = output.data
+        response.metadata = output.metadata
     except Exception as e:
         response.data = ""
         response.error(str(e))
